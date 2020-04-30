@@ -7,6 +7,7 @@ const ecosystemItems = [
 
 module.exports = {
     base: '/' + name + '/',
+    dest: './dist',
     locales: {
         '/': { lang: 'en-US', title: 'demo-code', description },
         '/zh/': {
