@@ -1,5 +1,6 @@
 const demoCode = require('../../src/')
-const { name, description } = require('../../package.json')
+const { description } = require('../../package.json')
+const name = 'vuepress-plugin-demo-code'
 
 const ecosystemItems = [
     { text: '📖markdown-it-vuese', link: 'https://buptsteve.github.io/markdown-it-vuese/' },
