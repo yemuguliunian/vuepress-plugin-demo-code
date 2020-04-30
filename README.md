@@ -28,9 +28,6 @@ module.exports = {
     -   不支持 `minHeight`
     -   不支持 `onlineBtns`
 
-## 示例
-![Image text](./example.jpg)
-
 ## 更多
 
 请参考 [vuepress-plugin-demo-code](https://buptsteve.github.io/vuepress-plugin-demo-code/)
