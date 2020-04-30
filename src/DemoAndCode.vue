@@ -1,6 +1,8 @@
 <template>
     <section class="demo-and-code-wrapper">
-        <slot name="demo" />
+        <div class="demo">
+            <slot name="demo" />
+        </div>
 
         <div
             ref="codeControl"
@@ -8,12 +10,11 @@
             @click="onClickControl"
             :style="codeControlStyle"
         >
-            <span class="control-btn" v-show="isShowControl">
-                {{ controlText }}
-                <i class="arrow-icon" :style="iconStyle" />
+            <span class="control-btn" v-show="isShowControl" >
+                <i class="arrow-icon" :style="iconStyle"/>
             </span>
 
-            <div class="online-wrapper" @click.stop>
+            <!-- <div class="online-wrapper" @click.stop>
                 <OnlineEdit
                     v-for="platform in platforms"
                     :key="platform"
@@ -21,20 +22,21 @@
                     v-bind="parsedCode"
                     :platform="platform"
                 />
-            </div>
+            </div> -->
         </div>
-
+        <transition>
         <div class="code-wrapper" ref="codeWrapper" :style="codeWrapperStyle">
             <div
                 v-html="highlightCode"
                 :class="`language-${language} extra-class`"
             />
         </div>
+        </transition>
     </section>
 </template>
 
 <script>
-import OnlineEdit from './OnlineEdit.vue'
+// import OnlineEdit from './OnlineEdit.vue'
 import getHighlightCodeHtml from './highlight'
 import {
     JS_RE,
@@ -50,7 +52,7 @@ import {
 export default {
     name: 'DemoAndCode',
     components: {
-        OnlineEdit,
+        // OnlineEdit,
     },
     props: {
         htmlStr: { type: String, default: '' },
@@ -61,7 +63,7 @@ export default {
         cssLibsStr: { type: String, default: '[]' },
         minHeight: {
             type: Number,
-            default: 200,
+            default: 0,
             validator: val => val >= 0,
         },
         onlineBtnsStr: { type: String, default: '{}' },
@@ -74,7 +76,7 @@ export default {
             codeHeight: 9999,
             navbarHeight: 0,
 
-            isShowCode: true,
+            isShowCode: false,
             isShowControl: true,
         }
     },
@@ -90,7 +92,8 @@ export default {
         }),
         // animation
         codeWrapperStyle: (vm) => ({
-            'max-height': vm.isShowCode ? `${vm.codeHeight}px` : `${vm.minHeight}px`,
+            display: vm.isShowCode ? 'block' : 'none',
+            // 'max-height': vm.isShowCode ? `${vm.codeHeight}px` : `${vm.minHeight}px`,
         }),
         // sticky
         codeControlStyle: (vm) => ({
@@ -116,17 +119,17 @@ export default {
     methods: {
         onClickControl () {
             this.isShowCode = !this.isShowCode
-
-            if (!this.isShowCode) {
+            if (this.isShowCode) {
                 this.getDomRect()
-                window.scrollTo({ top: this.scrollTop, behavior: 'smooth' })
+                // window.scrollTo({ top: this.scrollTop, behavior: 'smooth' })
             }
         },
         getDomRect () {
             const navbar = document.querySelector('header.navbar')
             const { codeWrapper } = this.$refs
-
+            console.log(codeWrapper.getBoundingClientRect())
             const { top: codeTop, height: codeHeight } = codeWrapper.getBoundingClientRect()
+            console.log(codeHeight)
             const { height: navbarHeight } = navbar
                 ? navbar.getBoundingClientRect()
                 : { height: 0 }
@@ -147,83 +150,81 @@ export default {
     },
 }
 </script>
-
 <style lang="stylus">
-
 html {
     scroll-behavior: smooth;
 }
 
 .demo-and-code-wrapper {
-    padding: 20px 0;
-
+    overflow: hidden;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    margin-top: 1em;
+    margin-bottom: 40px;
+    .demo {
+        padding: 25px 35px;
+        user-select: none;
+        overflow-x: auto;
+    }
     // for vuepress-plugin-code-copy
     .code-copy {
         position: absolute;
         top: 20px;
         right: 0;
-
         opacity: 1;
-
         svg {
             right: 10px;
         }
     }
-
     .code-control {
         position: sticky;
         z-index: 9;
-
         display: flex;
         justify-content: space-between;
-
         width: 100%;
-        height: 50px;
-        margin-bottom: -.85rem;
-
+        height: 40px;
         text-align: center;
-
         background-color: #fff;
-
         font-size: 20px;
-        line-height: 50px;
-
+        line-height: 40px;
         .control-btn {
             display: flex;
             flex: 1;
             justify-content: center;
+            border-top: 1px dashed #ebedf0;
+            opacity: .6;
+            transition: opacity .3s;
+            &:hover {
+                opacity: 1;
+            }
         }
-
         .arrow-icon {
             display: inline-block;
             align-self: center;
-
             margin-left: 5px;
-
             transition: transform .3s ease-in-out;
-
             border-top: none;
             border-right: 6px solid transparent;
             border-bottom: 6px solid #2c3e50;
             border-left: 6px solid transparent;
         }
     }
-
     .code-wrapper {
-        overflow: hidden;
-
-        transition: max-height .6s ease-in-out;
+        overflow: auto;
+        transition: max-height .1s cubic-bezier(.645,.045,.355,1);
+        background-color: #282c34;
+    }
+    pre {
+        margin: 0 !important;
     }
 }
 
 @media (max-width: 419px) {
     .demo-and-code-wrapper {
         margin: 0 -1.5rem;
-
         .code-wrapper {
             overflow: auto;
         }
-
         div[class*="language-"] {
             margin: 0 !important;
         }
