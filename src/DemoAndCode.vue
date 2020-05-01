@@ -127,9 +127,7 @@ export default {
         getDomRect () {
             const navbar = document.querySelector('header.navbar')
             const { codeWrapper } = this.$refs
-            console.log(codeWrapper.getBoundingClientRect())
             const { top: codeTop, height: codeHeight } = codeWrapper.getBoundingClientRect()
-            console.log(codeHeight)
             const { height: navbarHeight } = navbar
                 ? navbar.getBoundingClientRect()
                 : { height: 0 }
